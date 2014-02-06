@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
 
-namespace CodeFirstOne.Models
+namespace myAppMemory.Models
 {
     public class Person
     {
