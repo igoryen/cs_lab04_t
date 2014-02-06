@@ -3,63 +3,66 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using myAppMemory.Models;
+using CodeFirstOne.Models;
+using CodeFirstOne.ViewModels;
 
-namespace myAppMemory.Controllers
+namespace CodeFirstOne.Controllers
 {
-      public class HomeController : Controller
-      {
-          private Manager man = new Manager();
-          //
-          // GET: /Home/
+    public class HomeController : Controller
+    {
+        private Repo_Student repo = new Repo_Student();
+        private Manager man = new Manager();
+        //
+        // GET: /VM/
+        public ActionResult Index()
+        {
+            return View(repo.getStudentNames());
+        }
 
-          public ActionResult Index()
-          {
-              ViewBag.stu = man.sortStudents();
-              return View();
-          }
+        public ActionResult List()
+        {
+            return View(repo.getStudentsFull());
+        }
 
-          public ActionResult ViewAll()
-          {
-              return View(man.sortStudents());
-          }
+        public ActionResult Create()
+        {
+            ViewBag.ddl = man.getSelectList();
+            return View();
+        }
 
-          public ActionResult Create()
-          {
-              return View();
-          }
+        [HttpPost]
+        public ActionResult Create(StudentFull st, FormCollection form)
+        {
+            if (ModelState.IsValid)
+            {
+                //form[5] is the collection of selected values in the listbox
+                if (form.Count == 6)
+                {
+                    repo.createStudent(st, form[5]); 
+                }
+                else
+                {
+                    repo.createStudent(st);
+                }
 
-          [HttpPost]
-          public ActionResult Create(Student student)
-          {
-              if (ModelState.IsValid)
-              {
-                  man.createStudent(student);
-                  return RedirectToAction("ViewAll");
-              }
-              else
-              {
-                  return View("Error");
-              }
-          }
 
-          public ActionResult Ddl()
-          {
-              ViewBag.li = man.getSelectList();
-              return View();
-          }
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View("Error");
+            }
+        }
 
-          [HttpPost]
-          public ActionResult Details(FormCollection form)
-          {
-              int id = Convert.ToInt32(form[0]);
-              return View(man.getStudent(id));
-          }
+        public ActionResult Details(int? id)
+        {
+            return View(repo.getStudentPublic(id));
+        }
 
-          public ActionResult Error()
-          {
-              return View(); ;
-          }
+        public ActionResult Error()
+        {
+            return View();
+        }
+    }
 
-      }
-  }
+}
